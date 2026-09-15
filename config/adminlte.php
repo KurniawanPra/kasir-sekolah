@@ -309,10 +309,11 @@ return [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
+        
         //Sidebar items
         [
             'text' => 'Dashboard',
-            'url' => 'admin/dashboard',
+            'route' => 'dashboard',
             'icon' => 'fas fa-home',
         ],
         [
@@ -321,8 +322,11 @@ return [
             'submenu' => [
                 [
                     'text' => 'Data Siswa',
-                    'url' => 'siswa',
-                    'icon' => 'fas fa-users',
+                    'route' => 'siswa.create',
+                ],
+                [
+                    'text' => 'Data Guru',
+                    'route' => 'guru.index',
                 ]
             ],
         ]
