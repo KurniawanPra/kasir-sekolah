@@ -51,6 +51,7 @@
                 <thead>
                     <tr>
                         <th style="width: 10px">No</th>
+                        <th>Gambar</th>
                         <th>Nama Siswa</th>
                         <th>NIS</th>
                         <th>Jurusan</th> 
@@ -63,9 +64,12 @@
                     @forelse ($siswas as $key => $siswa)
                     <tr>
                         <td>{{ $siswas->firstItem() + $key }}</td>
-                        <td>{{ $siswa->nama_siswa }}</td>
+                        <td>
+                            <img src="{{ asset('storage/'. $siswa->foto)}}" alt="Foto Siswa" width="100">
+                        </td>
+                        <td>{{ $siswa->nama }}</td>
                         <td>{{ $siswa->nis }}</td>
-                        <td>{{ $siswa->jurusan }}</td> 
+                        <td>{{ $siswa->jurusan}}</td> 
                         <td>{{ $siswa->kelas }}</td>   
                         <td>{{ $siswa->email }}</td>
                         <td>

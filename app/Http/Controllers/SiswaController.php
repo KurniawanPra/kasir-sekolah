@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Siswa;
-use Barryvdh\DomPDF\Facade\Pdf; // Import Facade PDF
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,7 +14,7 @@ class SiswaController extends Controller
 	    //Filter search
         $siswas = Siswa::query()
             ->when($request->search, function ($query, $search) {
-                $query->where('nama_siswa', 'like', "%{$search}%")
+                $query->where('nama', 'like', "%{$search}%")
                       ->orWhere('nis', 'like', "%{$search}%");
             })
             ->paginate(10); 
@@ -22,7 +22,7 @@ class SiswaController extends Controller
         return view('siswa.index', compact('siswas'));
     }
     
-     public function create()
+    public function create()
     {
         return view('siswa.create');
     }
@@ -31,22 +31,21 @@ class SiswaController extends Controller
     {
         // Validasi sekaligus simpan hasilnya ke variabel $data
         $data = $request->validate([
-            'nama_siswa' => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
             'nis'        => 'required|string|unique:siswas|max:20',
             'jurusan'    => 'required|string|max:100',
             'kelas'      => 'required|string|max:50',
             'email'      => 'nullable|email|unique:siswas',
         ]);
-
+        
         if($request->hasFile('foto')){
             $data['foto'] = $request->file('foto')->store('foto-siswa', 'public');
         }
 
-        // Simpan data langsung (tanpa perlu definisikan satu-satu)
         Siswa::create($data);
 
         return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil ditambahkan.');
-    }
+    }   
     
     public function edit(Siswa $siswa)
     {
@@ -57,7 +56,7 @@ class SiswaController extends Controller
     {
         // Validasi data
         $data = $request->validate([
-            'nama_siswa' => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
             'nis'        => 'required|string|max:20|unique:siswas,nis,'.$siswa->id, 
             'jurusan'    => 'required|string|max:100',
             'kelas'      => 'required|string|max:50',
@@ -86,6 +85,9 @@ class SiswaController extends Controller
     
     public function destroy(Siswa $siswa)
     {
+        if ($siswa->foto && Storage::disk('public')->exists($siswa->foto)) {
+            Storage::disk('public')->delete($siswa->foto);
+        }
 
         $siswa->delete();
 

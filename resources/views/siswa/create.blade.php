@@ -11,11 +11,10 @@
         <div class="card-body">
              <form action="{{ route('siswa.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf 
-
                 <div class="form-group">
-                    <label for="nama_siswa">Nama Siswa</label>
-                    <input type="text" name="nama_siswa" class="form-control @error('nama_siswa') is-invalid @enderror" id="nama_siswa" required value="{{ old('nama_siswa') }}">
-                    @error('nama_siswa')
+                    <label for="nama">Nama Siswa</label>
+                    <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror" id="nama" required value="{{ old('nama') }}">
+                    @error('nama')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
@@ -65,13 +64,14 @@
                 <div class="form-group">
                     <label for="foto">Foto</label>
                     <input type="file" name="foto" class="form-control-file @error('foto') is-invalid @enderror" id="foto" accept="image/*">
-                    <small class="form-text text-muted">Format: JPG, JPEG, PNG. Maksimal 2MB.</small>
+                    <small class="form-text form-muted">Format: JPG, JPEG, PNG. Maksimal 2MB.</small>
                     @error('foto')
-                        <span class="text-danger" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
+                    <span class="text-danger" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
                     @enderror
                 </div>
+                
 
                 <button type="submit" class="btn btn-primary">Simpan</button>
                 <a href="{{ route('siswa.index') }}" class="btn btn-secondary">Batal</a>
