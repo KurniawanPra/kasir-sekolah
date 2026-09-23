@@ -20,6 +20,11 @@ class Guru extends Model
         'email',
         'alamat',
         'status',
+        'foto',
     ];
-    
+
+    public function kelas()
+    {
+        return $this->hasOne(Kelas::class, 'guru_id');
+    }
 }

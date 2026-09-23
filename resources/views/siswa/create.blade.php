@@ -9,12 +9,12 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-             <form action="{{ route('siswa.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf 
+            <form action="{{ route('siswa.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
                 <div class="form-group">
-                    <label for="nama">Nama Siswa</label>
-                    <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror" id="nama" required value="{{ old('nama') }}">
-                    @error('nama')
+                    <label for="nama_siswa">Nama Siswa</label>
+                    <input type="text" name="nama_siswa" class="form-control @error('nama_siswa') is-invalid @enderror" id="nama_siswa" required value="{{ old('nama_siswa') }}">
+                    @error('nama_siswa')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
@@ -42,9 +42,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="kelas">Kelas</label>
-                    <input type="text" name="kelas" class="form-control @error('kelas') is-invalid @enderror" id="kelas" required placeholder="Contoh: 12-RPL-A" value="{{ old('kelas') }}">
-                    @error('kelas')
+                    <label for="kelas_id">Kelas</label>
+                    <select name="kelas_id" class="form-control @error('kelas_id') is-invalid @enderror" id="kelas_id" required>
+                        <option value="">-- Pilih Kelas --</option>
+                        @foreach($kelas as $k)
+                            <option value="{{ $k->id }}" {{ old('kelas_id') == $k->id ? 'selected' : '' }}>
+                                {{ $k->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('kelas_id')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
@@ -64,14 +71,13 @@
                 <div class="form-group">
                     <label for="foto">Foto</label>
                     <input type="file" name="foto" class="form-control-file @error('foto') is-invalid @enderror" id="foto" accept="image/*">
-                    <small class="form-text form-muted">Format: JPG, JPEG, PNG. Maksimal 2MB.</small>
+                    <small class="form-text text-muted">Format: JPG, JPEG, PNG. Maksimal 2MB.</small>
                     @error('foto')
-                    <span class="text-danger" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
+                        <span class="text-danger" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
                     @enderror
                 </div>
-                
 
                 <button type="submit" class="btn btn-primary">Simpan</button>
                 <a href="{{ route('siswa.index') }}" class="btn btn-secondary">Batal</a>

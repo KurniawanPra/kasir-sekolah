@@ -46,7 +46,7 @@
                         </tr>
                         <tr>
                             <th>Kelas</th>
-                            <td>{{ $siswa->kelas }}</td>
+                            <td>{{ $siswa->kelas->name ?? '-' }}</td>
                         </tr>
                         <tr>
                             <th>Email</th>

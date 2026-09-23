@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kelas;
 use App\Models\Siswa;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -11,56 +12,63 @@ class SiswaController extends Controller
 {
     public function index(Request $request)
     {
-	    //Filter search
-        $siswas = Siswa::query()
+        // Filter search
+        $siswas = Siswa::with('kelas')
             ->when($request->search, function ($query, $search) {
-                $query->where('nama', 'like', "%{$search}%")
-                      ->orWhere('nis', 'like', "%{$search}%");
+                $query->where('nama_siswa', 'like', "%{$search}%")
+                    ->orWhere('nis', 'like', "%{$search}%");
             })
-            ->paginate(10); 
+            ->latest()
+            ->paginate(10);
 
         return view('siswa.index', compact('siswas'));
     }
-    
+
     public function create()
     {
-        return view('siswa.create');
+        $kelas = Kelas::all();
+
+        return view('siswa.create', compact('kelas'));
     }
-    
+
     public function store(Request $request)
     {
         // Validasi sekaligus simpan hasilnya ke variabel $data
         $data = $request->validate([
-            'nama' => 'required|string|max:255',
-            'nis'        => 'required|string|unique:siswas|max:20',
-            'jurusan'    => 'required|string|max:100',
-            'kelas'      => 'required|string|max:50',
-            'email'      => 'nullable|email|unique:siswas',
+            'nama_siswa' => 'required|string|max:255',
+            'nis' => 'required|string|unique:siswas|max:20',
+            'jurusan' => 'required|string|max:100',
+            'kelas_id' => 'required|exists:kelas,id',
+            'email' => 'nullable|email|unique:siswas',
+            'foto' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
         ]);
-        
-        if($request->hasFile('foto')){
+
+        if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('foto-siswa', 'public');
         }
 
         Siswa::create($data);
 
         return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil ditambahkan.');
-    }   
-    
+    }
+
     public function edit(Siswa $siswa)
     {
-        return view('siswa.edit',compact('siswa'));
+        $kelas = Kelas::all();
+
+        return view('siswa.edit', compact('siswa', 'kelas'));
     }
-    
+
     public function update(Request $request, Siswa $siswa)
     {
         // Validasi data
         $data = $request->validate([
-            'nama' => 'required|string|max:255',
-            'nis'        => 'required|string|max:20|unique:siswas,nis,'.$siswa->id, 
-            'jurusan'    => 'required|string|max:100',
-            'kelas'      => 'required|string|max:50',
-            'email'      => 'nullable|email|unique:siswas,email,'.$siswa->id,
+            'nama_siswa' => 'required|string|max:255',
+            'nis' => 'required|string|max:20|unique:siswas,nis,'.$siswa->id,
+            'jurusan' => 'required|string|max:100',
+            'kelas_id' => 'required|exists:kelas,id',
+            'email' => 'nullable|email|unique:siswas,email,'.$siswa->id,
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -77,12 +85,12 @@ class SiswaController extends Controller
 
         return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil diperbarui.');
     }
-    
+
     public function show(Siswa $siswa)
     {
         return view('siswa.show', compact('siswa'));
     }
-    
+
     public function destroy(Siswa $siswa)
     {
         if ($siswa->foto && Storage::disk('public')->exists($siswa->foto)) {
@@ -94,8 +102,9 @@ class SiswaController extends Controller
         return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil dihapus.');
     }
 
-    public function cetakPdf(){
-        $siswas = Siswa::all();
+    public function cetakPdf()
+    {
+        $siswas = Siswa::with('kelas')->get();
 
         $pdf = Pdf::loadView('siswa.pdf', compact('siswas'))
             ->setPaper('a4', 'landscape');

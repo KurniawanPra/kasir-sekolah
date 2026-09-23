@@ -2,23 +2,28 @@
 
 namespace App\Models;
 
-use App\Models\Guru;
-use App\Models\Siswa;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Kelas extends Model
 {
+    use HasFactory;
+
     protected $table = 'kelas';
+
     protected $fillable = [
-        'nama',
-        'guru_id'
+        'name',
+        'guru_id',
+        'nominal_spp',
     ];
 
-    public function guru(){
+    public function guru()
+    {
         return $this->belongsTo(Guru::class, 'guru_id');
     }
 
-    public function siswa(){
-        return $this->hasMany(Siswa::class, 'guru_id');
+    public function siswa()
+    {
+        return $this->hasMany(Siswa::class, 'kelas_id');
     }
 }

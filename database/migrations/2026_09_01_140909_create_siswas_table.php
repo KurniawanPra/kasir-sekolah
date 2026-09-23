@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama_siswa');
             $table->string('nis')->unique();
             $table->string('jurusan');
-            $table->string('kelas');
+            $table->foreignId('kelas_id')->nullable()->constrained('kelas')->onDelete('set null');
             $table->string('email')->nullable();
             $table->timestamps();
         });

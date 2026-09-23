@@ -14,10 +14,11 @@ class GuruController extends Controller
     public function index(Request $request)
     {
         $gurus = Guru::query()
-            ->when($request->search, function ($query, $search){
-                $query->where('nama_guru','like',"{% $search %}")
-                    ->orWhere('nip', 'like', "{% $search %}");
+            ->when($request->search, function ($query, $search) {
+                $query->where('nama_guru', 'like', "%{$search}%")
+                    ->orWhere('nip', 'like', "%{$search}%");
             })
+            ->latest()
             ->paginate(10);
 
         return view('guru.index', compact('gurus'));
@@ -37,15 +38,20 @@ class GuruController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nama_guru'         => 'required|string|max:255',
-            'nip'               => 'required|string|max:20|unique:gurus,nip',
-            'jabatan'           => 'required|string|max:50',
-            'mata_pelajaran'    => 'required|string|max:50',
-            'no_hp'             => 'required|string|max:15',
-            'email'             => 'required|email|unique:gurus,email',
-            'alamat'            => 'required|string',
-            'status'            => 'required|in:aktif,nonaktif',
+            'nama_guru' => 'required|string|max:255',
+            'nip' => 'required|string|max:20|unique:gurus,nip',
+            'jabatan' => 'required|string|max:50',
+            'mata_pelajaran' => 'required|string|max:50',
+            'no_hp' => 'required|string|max:15',
+            'email' => 'required|email|unique:gurus,email',
+            'alamat' => 'required|string',
+            'status' => 'required|in:aktif,nonaktif',
+            'foto' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
         ]);
+
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('foto-guru', 'public');
+        }
 
         Guru::create($data);
 
@@ -74,23 +80,24 @@ class GuruController extends Controller
     public function update(Request $request, Guru $guru)
     {
         $data = $request->validate([
-            'nama_guru'         => 'required|string|max:255',
-            'nip'               => 'required|string|max:20|unique:gurus,nip,'.$guru->id,
-            'jabatan'           => 'required|string|max:50',
-            'mata_pelajaran'    => 'required|string|max:50',
-            'no_hp'             => 'required|string|max:15',
-            'email'             => 'required|email|unique:gurus,email,'.$guru->id,
-            'alamat'            => 'required|string',
-            'status'            => 'required|in:aktif,nonaktif',
+            'nama_guru' => 'required|string|max:255',
+            'nip' => 'required|string|max:20|unique:gurus,nip,'.$guru->id,
+            'jabatan' => 'required|string|max:50',
+            'mata_pelajaran' => 'required|string|max:50',
+            'no_hp' => 'required|string|max:15',
+            'email' => 'required|email|unique:gurus,email,'.$guru->id,
+            'alamat' => 'required|string',
+            'status' => 'required|in:aktif,nonaktif',
+            'foto' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
         ]);
 
-        // if($request->hasFile('foto')){
-        //     if($guru->foto){
-        //         Storage::disk('public')->delete($guru->foto);   
-        //     }
+        if ($request->hasFile('foto')) {
+            if ($guru->foto && Storage::disk('public')->exists($guru->foto)) {
+                Storage::disk('public')->delete($guru->foto);
+            }
 
-        //     $data['foto'] = $request->file('foto')->store('foto-guru', 'public');
-        // }
+            $data['foto'] = $request->file('foto')->store('foto-guru', 'public');
+        }
 
         $guru->update($data);
 
@@ -102,6 +109,10 @@ class GuruController extends Controller
      */
     public function destroy(Guru $guru)
     {
+        if ($guru->foto && Storage::disk('public')->exists($guru->foto)) {
+            Storage::disk('public')->delete($guru->foto);
+        }
+
         $guru->delete();
 
         return redirect()->route('guru.index')->with('success', 'Berhasil Menghapus data Guru!');
