@@ -8,11 +8,9 @@
 
 @section('content')
     <div class="card">
-        {{-- Header dengan Style AdminLTE (Title di kiri, Tools di kanan) --}}
         <div class="card-header">
             <h3 class="card-title">Daftar Siswa</h3>
             <div class="card-tools">
-                <!-- belum buat halaman cetak-pdf -->
                 <a href="{{ route('siswa.cetak-pdf') }}" class="btn btn-danger btn-sm" target="_blank">
                     <i class="fas fa-file-pdf"></i> Cetak PDF
                 </a>
@@ -21,8 +19,7 @@
                 </a>
             </div>
         </div>
-        
-        {{-- Bagian Pencarian & Alert (Diberi padding agar rapi) --}}
+
         <div class="card-body pb-0">
             <form action="{{ route('siswa.index') }}" method="GET" class="mb-3">
                 <div class="input-group">
@@ -45,17 +42,16 @@
             @endif
         </div>
 
-        {{-- Bagian Tabel (Style disamakan dengan Data Guru: p-0, table-hover, text-nowrap) --}}
         <div class="card-body table-responsive p-0">
             <table class="table table-hover text-nowrap">
                 <thead>
                     <tr>
                         <th style="width: 10px">No</th>
-                        <th>Gambar</th>
+                        <th>Foto</th>
                         <th>Nama Siswa</th>
                         <th>NIS</th>
-                        <th>Jurusan</th> 
-                        <th>Kelas</th>   
+                        <th>Jurusan</th>
+                        <th>Kelas</th>
                         <th>Email</th>
                         <th>Aksi</th>
                     </tr>
@@ -65,15 +61,18 @@
                     <tr>
                         <td>{{ $siswas->firstItem() + $key }}</td>
                         <td>
-                            <img src="{{ asset('storage/'. $siswa->foto)}}" alt="Foto Siswa" width="100">
+                            @if($siswa->foto)
+                                <img src="{{ asset('storage/' . $siswa->foto) }}" alt="Foto {{ $siswa->nama_siswa }}" class="img-thumbnail" width="50" height="50" style="object-fit: cover; border-radius: 50%;">
+                            @else
+                                <span class="badge badge-secondary">No Foto</span>
+                            @endif
                         </td>
-                        <td>{{ $siswa->nama }}</td>
+                        <td>{{ $siswa->nama_siswa }}</td>
                         <td>{{ $siswa->nis }}</td>
-                        <td>{{ $siswa->jurusan}}</td> 
-                        <td>{{ $siswa->kelas }}</td>   
-                        <td>{{ $siswa->email }}</td>
+                        <td>{{ $siswa->jurusan }}</td>
+                        <td>{{ $siswa->kelas->name ?? 'Belum ada kelas' }}</td>
+                        <td>{{ $siswa->email ?? '-' }}</td>
                         <td>
-                            {{-- Tombol Aksi disinkronkan stylenya (btn-sm, icon only) --}}
                             <a class="btn btn-info btn-sm" href="{{ route('siswa.show', $siswa->id) }}" title="Lihat">
                                 <i class="fas fa-eye"></i>
                             </a>
@@ -91,7 +90,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center">Data tidak ditemukan.</td>
+                        <td colspan="8" class="text-center">Data tidak ditemukan.</td>
                     </tr>
                     @endforelse
                 </tbody>
