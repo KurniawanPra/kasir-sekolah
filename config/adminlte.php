@@ -322,11 +322,15 @@ return [
             'submenu' => [
                 [
                     'text' => 'Data Siswa',
-                    'route' => 'siswa.create',
+                    'route' => 'siswa.index',
                 ],
                 [
                     'text' => 'Data Guru',
                     'route' => 'guru.index',
+                ],
+                [
+                    'text' => 'Data Kelas',
+                    'route' => 'kelas.index',
                 ]
             ],
         ]
