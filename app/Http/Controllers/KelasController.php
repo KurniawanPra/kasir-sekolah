@@ -34,19 +34,20 @@ class KelasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'guru_id' => 'required|exists:gurus,id',
+            'nominal_spp' => 'required|numeric|min:0',
         ]);
 
         Kelas::create($request->all());
 
-        return redirect()->route('kelas.index')->with('success', 'Berhasil Tambah data Kelas!');
+        return redirect()->route('kelas.index')->with('success', 'Data Kelas berhasil ditambahkan');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Kelas $kelas)
+    public function show(string $id)
     {
         //
     }
@@ -65,21 +66,23 @@ class KelasController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request,int $id)
+    public function update(Request $request, int $id)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'guru_id' => 'required|exists:gurus,id',
+            'nominal_spp' => 'required|numeric|min:0',
         ]);
 
         $kelas = Kelas::findOrFail($id);
 
         $kelas->update([
-            'nama' => $request->nama,
+            'name' => $request->name,
             'guru_id' => $request->guru_id,
+            'nominal_spp' => $request->nominal_spp,
         ]);
 
-        return redirect()->route('kelas.index')->with('success', 'Berhasil Mengupdate Data Kelas!');
+        return redirect()->route('kelas.index')->with('success', 'Data Kelas berhasil diperbarui!');
     }
 
     /**
@@ -91,6 +94,6 @@ class KelasController extends Controller
 
         $kelas->delete();
 
-        return redirect()->route('kelas.index')->with('success', 'Berhasil Hapus Data Kelas!');
+        return redirect()->route('kelas.index')->with('success', 'Kelas berhasil dihapus!');
     }
 }

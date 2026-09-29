@@ -9,27 +9,35 @@
 @section('content')
 <section class="content">
     <div class="container-fluid">
-        <div class="card card-primary"> <div class="card-header">
+        <div class="card card-primary">
+            <div class="card-header">
                 <h3 class="card-title">Form Edit Kelas</h3>
             </div>
-            
+
             @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+                <div class="alert alert-danger m-3">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             @endif
 
             <form action="{{ route('kelas.update', $kelas->id) }}" method="POST">
                 @csrf
-                @method('PUT') <div class="card-body">
+                @method('PUT')
+                <div class="card-body">
                     <div class="form-group">
                         <label>Nama Kelas</label>
-                        <input type="text" name="nama" class="form-control" 
-                               value="{{ old('nama', $kelas->nama) }}" required>
+                        <input type="text" name="name" class="form-control"
+                               value="{{ old('name', $kelas->name) }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Biaya SPP per Bulan (Rp)</label>
+                        <input type="number" name="nominal_spp" class="form-control"
+                               value="{{ old('nominal_spp', $kelas->nominal_spp ?? 0) }}" required>
                     </div>
 
                     <div class="form-group">
@@ -37,7 +45,7 @@
                         <select name="guru_id" class="form-control" required>
                             <option value="">-- Pilih Wali Kelas --</option>
                             @foreach($guru as $g)
-                                <option value="{{ $g->id }}" {{ $kelas->guru_id == $g->id ? 'selected' : '' }}>
+                                <option value="{{ $g->id }}" {{ old('guru_id', $kelas->guru_id) == $g->id ? 'selected' : '' }}>
                                     {{ $g->nama_guru }}
                                 </option>
                             @endforeach
