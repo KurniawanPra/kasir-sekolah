@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Gate untuk Admin
+        Gate::define('admin-only', function (User $user) {
+            return $user->role === 'admin';
+        });
+
+        // Gate untuk Admin dan Guru
+        Gate::define('admin-guru', function (User $user) {
+            return in_array($user->role, ['admin', 'guru']);
+        });
     }
 }
