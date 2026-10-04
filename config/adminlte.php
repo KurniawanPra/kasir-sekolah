@@ -1,5 +1,13 @@
 <?php
 
+use JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter;
+
 return [
 
     /*
@@ -153,7 +161,7 @@ return [
     */
 
     'layout_topnav' => null,
-    'layout_boxed' => null,         
+    'layout_boxed' => null,
     'layout_fixed_sidebar' => null,
     'layout_fixed_navbar' => null,
     'layout_fixed_footer' => null,
@@ -309,31 +317,53 @@ return [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
-        
-        //Sidebar items
+
+        // Sidebar items
         [
             'text' => 'Dashboard',
             'route' => 'dashboard',
-            'icon' => 'fas fa-home',
+            'icon' => 'fas fa-fw fa-tachometer-alt',
         ],
+
+        // MENU DATA MASTER (Hanya Admin)
         [
             'text' => 'Data Master',
-            'icon' => 'fas fa-database',
+            'icon' => 'fas fa-fw fa-folder',
+            'can' => 'admin-only',
             'submenu' => [
                 [
                     'text' => 'Data Siswa',
                     'route' => 'siswa.index',
+                    'icon' => 'fas fa-fw fa-user-graduate',
                 ],
                 [
                     'text' => 'Data Guru',
                     'route' => 'guru.index',
+                    'icon' => 'fas fa-fw fa-chalkboard-teacher',
                 ],
                 [
                     'text' => 'Data Kelas',
                     'route' => 'kelas.index',
-                ]
+                    'icon' => 'fas fa-fw fa-school',
+                ],
             ],
-        ]
+        ],
+
+        // MENU TRANSAKSI (Admin & Guru)
+        [
+            'text' => 'Transaksi SPP',
+            'route' => 'transaksi.index',
+            'icon' => 'fas fa-fw fa-money-bill-wave',
+            'can' => 'admin-guru',
+        ],
+
+        // MENU USER MANAGEMENT (Hanya Admin)
+        [
+            'text' => 'Manajemen User',
+            'route' => 'users.index',
+            'icon' => 'fas fa-fw fa-users-cog',
+            'can' => 'admin-only',
+        ],
     ],
     /*
     |--------------------------------------------------------------------------
@@ -348,13 +378,13 @@ return [
     */
 
     'filters' => [
-        JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
+        GateFilter::class,
+        HrefFilter::class,
+        SearchFilter::class,
+        ActiveFilter::class,
+        ClassesFilter::class,
+        LangFilter::class,
+        DataFilter::class,
     ],
 
     /*
